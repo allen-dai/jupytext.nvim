@@ -8,13 +8,13 @@ M.config = {
   output_extension = "auto",
   force_ft = nil,
   custom_language_formatting = {},
+  save_to_tmp = true,
 }
 
 local write_to_ipynb = function(event, output_extension)
   local ipynb_filename = event.match
-  local jupytext_filename = utils.get_jupytext_file(ipynb_filename, output_extension)
+  local jupytext_filename = utils.get_jupytext_file(ipynb_filename, output_extension, M.config.save_to_tmp)
   jupytext_filename = vim.fn.resolve(vim.fn.expand(jupytext_filename))
-
   vim.cmd.write({ jupytext_filename, bang = true })
   commands.run_jupytext_command(vim.fn.shellescape(jupytext_filename), {
     ["--update"] = "",
@@ -60,7 +60,7 @@ local cleanup = function(ipynb_filename, delete)
 
   local _, output_extension, _ = style_and_extension(metadata)
 
-  local jupytext_filename = utils.get_jupytext_file(ipynb_filename, output_extension)
+  local jupytext_filename = utils.get_jupytext_file(ipynb_filename, output_extension, M.config.save_to_tmp)
   if delete then
     vim.fn.delete(vim.fn.resolve(vim.fn.expand(jupytext_filename)))
   end
@@ -73,7 +73,7 @@ local read_from_ipynb = function(ipynb_filename)
   -- Decide output extension and style
   local custom_formatting, output_extension, to_extension_and_style = style_and_extension(metadata)
 
-  local jupytext_filename = utils.get_jupytext_file(ipynb_filename, output_extension)
+  local jupytext_filename = utils.get_jupytext_file(ipynb_filename, output_extension, M.config.save_to_tmp)
   local jupytext_file_exists = vim.fn.filereadable(jupytext_filename) == 1
   -- filename is the notebook
   local filename_exists = vim.fn.filereadable(ipynb_filename)

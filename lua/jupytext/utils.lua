@@ -23,9 +23,13 @@ M.get_ipynb_metadata = function(filename)
   return { language = language, extension = extension }
 end
 
-M.get_jupytext_file = function(filename, extension)
+M.get_jupytext_file = function(filename, extension, as_tmp)
   local fileroot = vim.fn.fnamemodify(filename, ":r")
-  return fileroot .. "." .. extension
+  local jupytext_file =  fileroot .. "." .. extension
+  if as_tmp then
+    jupytext_file = "/tmp/" .. jupytext_file:gsub("/", "_")
+  end
+  return jupytext_file
 end
 
 M.check_key = function(tbl, key)
